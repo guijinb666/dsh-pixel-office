@@ -1,0 +1,10 @@
+﻿import puppeteer from "puppeteer-core";
+const b = await puppeteer.launch({ executablePath: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe", headless: "new", args:["--no-sandbox"] });
+const p = await b.newPage();
+const bad = [];
+p.on("response", (r) => { if (r.status() >= 400) bad.push(r.status() + " " + r.url()); });
+await p.setViewport({ width: 420, height: 560 });
+await p.goto("http://127.0.0.1:8791/?act=probe", { waitUntil: "networkidle2" });
+await new Promise((r) => setTimeout(r, 2000));
+console.log(bad.length ? bad.join("\n") : "无 4xx/5xx");
+await b.close();

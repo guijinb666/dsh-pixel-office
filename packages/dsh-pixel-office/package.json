@@ -1,0 +1,32 @@
+{
+  "name": "dsh-pixel-office",
+  "version": "0.1.0",
+  "description": "Pixel-art 2D office overlay for the DSH web GUI: seats map to agents, the main seat hosts the DSH fish, sub seats host subagents in model-specific outfits",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "assets",
+    "cordis.patch.yml"
+  ],
+  "license": "Apache-2.0",
+  "dsh": {
+    "engines": {
+      "dsh": ">=0.1.7-rc.1"
+    },
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-connection"
+      ],
+      "platform": "web"
+    }
+  }
+}

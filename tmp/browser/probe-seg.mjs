@@ -1,0 +1,23 @@
+﻿import { createRequire } from "node:module";
+const require = createRequire(import.meta.url);
+const puppeteer = require("puppeteer-core");
+const browser = await puppeteer.launch({ executablePath: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe", headless: "new", args: ["--no-sandbox"] });
+const page = await browser.newPage();
+await page.setViewport({ width: 900, height: 900 });
+await page.goto("http://127.0.0.1:8791/", { waitUntil: "domcontentloaded" });
+await page.waitForSelector("[data-po-card]", { timeout: 20000 });
+await new Promise(r => setTimeout(r, 800));
+const out = await page.evaluate(() => {
+  const bar = document.querySelector("[data-po-bar]");
+  const btns = Array.from(bar.querySelectorAll("button"));
+  btns[btns.length - 2].click();
+  const settings = document.querySelector("[data-po-settings]");
+  const rows = Array.from(settings.children).filter(el => el.querySelector("[data-po-val]"));
+  const read = (r) => Array.from(r.querySelectorAll("[data-po-val]")).map(b => b.textContent + ":" + getComputedStyle(b).backgroundColor);
+  const before = { vis: read(rows[0]), scale: read(rows[1]) };
+  rows[0].querySelectorAll("[data-po-val]")[1].click();
+  const after = { vis: read(rows[0]), stage: getComputedStyle(document.querySelector("[data-po-stage]")).display };
+  return { before, after };
+});
+console.log(JSON.stringify(out, null, 2));
+await browser.close();

@@ -1,0 +1,69 @@
+# ---------------------------------------------------------------------------
+# 像素工作台 —— 忽略规则
+#
+# 本仓库只收「能复现交付物」的东西：
+#   packages/dsh-pixel-office/  插件本体（源码 + 运行时资产，约 1.5MB）
+#   tools/                      生图与精灵处理管线
+#   docs/                       规划文档
+#   assets/ 里的文本与小图      坐标表等（大原图见下）
+#   tmp/ 里的 .mjs/.json        验收套件与验收台（纯文本，很小）
+#
+# 不收：AI 出的原图（166MB）、调试截图与临时工作目录（351MB）。
+# 这些都能用 tools/gen-*.mjs + tools/sprite-prep.mjs 重新生成。
+# ---------------------------------------------------------------------------
+
+# 依赖
+node_modules/
+
+# 操作系统 / 编辑器垃圾
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Edge 把浏览器报错写进了名为 $null 的文件（PowerShell 重定向写法在 cmd 下没生效）
+$null
+
+# --- 原图与中间产物 ---------------------------------------------------------
+# assets/ 顶层存的是生图原始输出（raw 47MB）、各姿态大图（char 107MB）、
+# 场景原图（scene 9MB）。成品已经降采样后落在 packages/dsh-pixel-office/assets/，
+# 这里的原图只用于重新生成，不进版本库。
+#
+# 注意：不能直接写 /assets/scene/ —— git 对「父目录被整体忽略」的情况不适用
+# 后面的 ! 例外规则，会把 seats.json 一起吃掉。所以按扩展名忽略图片，
+# 让同目录下的 .json 坐标表（手工维护的源数据）能正常入库。
+/assets/char/
+/assets/raw/
+/assets/ref/
+/assets/atlas/
+/assets/pixel/
+/assets/scene/**/*.png
+/assets/scene/**/*.jpg
+/assets/scene/**/*.jpeg
+
+# --- 临时目录 ---------------------------------------------------------------
+# tmp/ 下几乎都是截图、逐帧对比图、session 导出。只保留纯文本脚本与清单。
+tmp/*
+!tmp/*.mjs
+!tmp/*.json
+!tmp/browser/
+
+# tmp/browser 里放浏览器验收套件（文本），同样排除它的 node_modules 软链与截图
+tmp/browser/*
+!tmp/browser/*.mjs
+!tmp/browser/*.json
+tmp/browser/node_modules/
+
+# 备份的旧版源码：历史由 git 自己管，不需要再留一份
+tmp/bak/
+
+# 生成过程中的对照图、逐帧扫描图
+tmp/shot/
+tmp/shots/
+tmp/shots-m05088/
+tmp/shots-parade/
+tmp/sheet/
+tmp/crop/
+tmp/live/
+tmp/nq/
+tmp/sweep2/
+tmp/repix-test/

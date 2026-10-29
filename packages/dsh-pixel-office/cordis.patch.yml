@@ -1,0 +1,5 @@
+# dsh-pixel-office bundle patch: 把本包作为一个 plugin row 插入 web 组合。
+# 单行同时挂 host 半（事件聚合 + HTTP 端点 + 资产路由）与 client 半（shell.overlay 里的像素办公室）。
+- insert:
+    - id: pixel-office
+      name: dsh-pixel-office

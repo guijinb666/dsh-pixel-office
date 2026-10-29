@@ -1,0 +1,323 @@
+{
+  "$comment": "座位锚点表。逻辑坐标系 = assets/scene/office-dark-320.png（320x431）。所有坐标都是该图的像素坐标。改底图必须重跑 tools/measure-seats.mjs 校对桌面边界。",
+  "scene": {
+    "file": "assets/scene/office-dark-320.png",
+    "source": "assets/scene/office-dark-1664x2240.png",
+    "w": 320,
+    "h": 431,
+    "sourceW": 1664,
+    "sourceH": 2240,
+    "scale": 0.192308
+  },
+  "door": {
+    "$comment": "底图下沿敞开的缺口，换算自 source 的 x 565..830 / y 1977..2239。角色从这里走进来。",
+    "x": 109,
+    "w": 51,
+    "y": 380,
+    "bottom": 431
+  },
+  "spriteSize": {
+    "main": 36,
+    "sub": 26
+  },
+  "main": {
+    "seatId": "main",
+    "deskL": 111,
+    "deskR": 234,
+    "deskCx": 172,
+    "deskTop": 100,
+    "deskBottom": 138,
+    "carpet": {
+      "x": 120,
+      "y": 164,
+      "w": 103,
+      "h": 34
+    },
+    "seated": {
+      "$comment": "角色 sprite 左上角落点。y 经 100/108/116/124 四档扫描实测：116 时坐在椅子上、上身越过桌面、双屏下半被身体遮住。",
+      "x": 154,
+      "y": 116
+    },
+    "screen": {
+      "$comment": "双屏深色显示面（实测连通块 x135..203 / y95..121）",
+      "x": 135,
+      "y": 95,
+      "w": 69,
+      "h": 27
+    },
+    "walkLaneX": 172
+  },
+  "$comment_subs": "seated.x = deskCx - 15，seated.y = deskTop + 3。两者都经 x/y 二维扫描实测：x 偏移 -15 时角色正对桌面居中，y = deskTop + 3 时坐在椅子上且上身越过桌面、屏幕在身后露出。",
+  "subs": [
+    {
+      "seatId": "sub:0",
+      "deskL": 52,
+      "deskR": 92,
+      "deskCx": 72,
+      "deskTop": 203,
+      "deskBottom": 226,
+      "seated": {
+        "x": 59,
+        "y": 211
+      },
+      "screen": {
+        "x": 63,
+        "y": 207,
+        "w": 17,
+        "h": 16
+      },
+      "walkLaneX": 72
+    },
+    {
+      "seatId": "sub:1",
+      "deskL": 114,
+      "deskR": 154,
+      "deskCx": 134,
+      "deskTop": 203,
+      "deskBottom": 226,
+      "seated": {
+        "x": 121,
+        "y": 211
+      },
+      "screen": {
+        "x": 125,
+        "y": 207,
+        "w": 17,
+        "h": 16
+      },
+      "walkLaneX": 134
+    },
+    {
+      "seatId": "sub:2",
+      "deskL": 175,
+      "deskR": 215,
+      "deskCx": 195,
+      "deskTop": 203,
+      "deskBottom": 226,
+      "seated": {
+        "x": 182,
+        "y": 211
+      },
+      "screen": {
+        "x": 186,
+        "y": 207,
+        "w": 17,
+        "h": 16
+      },
+      "walkLaneX": 195
+    },
+    {
+      "seatId": "sub:3",
+      "deskL": 235,
+      "deskR": 275,
+      "deskCx": 255,
+      "deskTop": 203,
+      "deskBottom": 226,
+      "seated": {
+        "x": 242,
+        "y": 211
+      },
+      "screen": {
+        "x": 246,
+        "y": 207,
+        "w": 17,
+        "h": 16
+      },
+      "walkLaneX": 255
+    },
+    {
+      "seatId": "sub:4",
+      "deskL": 52,
+      "deskR": 92,
+      "deskCx": 72,
+      "deskTop": 254,
+      "deskBottom": 275,
+      "seated": {
+        "x": 59,
+        "y": 262
+      },
+      "screen": {
+        "x": 63,
+        "y": 258,
+        "w": 17,
+        "h": 16
+      },
+      "walkLaneX": 72
+    },
+    {
+      "seatId": "sub:5",
+      "deskL": 114,
+      "deskR": 154,
+      "deskCx": 134,
+      "deskTop": 254,
+      "deskBottom": 275,
+      "seated": {
+        "x": 121,
+        "y": 262
+      },
+      "screen": {
+        "x": 125,
+        "y": 258,
+        "w": 17,
+        "h": 16
+      },
+      "walkLaneX": 134
+    },
+    {
+      "seatId": "sub:6",
+      "deskL": 175,
+      "deskR": 215,
+      "deskCx": 195,
+      "deskTop": 254,
+      "deskBottom": 275,
+      "seated": {
+        "x": 182,
+        "y": 262
+      },
+      "screen": {
+        "x": 186,
+        "y": 258,
+        "w": 17,
+        "h": 16
+      },
+      "walkLaneX": 195
+    },
+    {
+      "seatId": "sub:7",
+      "deskL": 235,
+      "deskR": 275,
+      "deskCx": 255,
+      "deskTop": 254,
+      "deskBottom": 275,
+      "seated": {
+        "x": 242,
+        "y": 262
+      },
+      "screen": {
+        "x": 246,
+        "y": 258,
+        "w": 17,
+        "h": 16
+      },
+      "walkLaneX": 255
+    },
+    {
+      "seatId": "sub:8",
+      "deskL": 52,
+      "deskR": 92,
+      "deskCx": 72,
+      "deskTop": 305,
+      "deskBottom": 326,
+      "seated": {
+        "x": 59,
+        "y": 313
+      },
+      "screen": {
+        "x": 63,
+        "y": 309,
+        "w": 17,
+        "h": 16
+      },
+      "walkLaneX": 72
+    },
+    {
+      "seatId": "sub:9",
+      "deskL": 114,
+      "deskR": 154,
+      "deskCx": 134,
+      "deskTop": 305,
+      "deskBottom": 326,
+      "seated": {
+        "x": 121,
+        "y": 313
+      },
+      "screen": {
+        "x": 125,
+        "y": 309,
+        "w": 17,
+        "h": 16
+      },
+      "walkLaneX": 134
+    },
+    {
+      "seatId": "sub:10",
+      "deskL": 175,
+      "deskR": 215,
+      "deskCx": 195,
+      "deskTop": 305,
+      "deskBottom": 326,
+      "seated": {
+        "x": 182,
+        "y": 313
+      },
+      "screen": {
+        "x": 186,
+        "y": 309,
+        "w": 17,
+        "h": 16
+      },
+      "walkLaneX": 195
+    },
+    {
+      "seatId": "sub:11",
+      "deskL": 235,
+      "deskR": 275,
+      "deskCx": 255,
+      "deskTop": 305,
+      "deskBottom": 326,
+      "seated": {
+        "x": 242,
+        "y": 313
+      },
+      "screen": {
+        "x": 246,
+        "y": 309,
+        "w": 17,
+        "h": 16
+      },
+      "walkLaneX": 255
+    }
+  ],
+  "zOrder": {
+    "$comment": "只按座位底部 y 排序，同 y 按 x。不做透视矩阵。",
+    "rule": "sort by (seated.y + spriteH) asc, then seated.x asc"
+  },
+  "clock": {
+    "$comment": "上墙白板左侧的圆形挂钟。canvas 每帧重画底图会擦掉指针，所以指针必须叠画。cx/cy 为钟面中心，r 为钟面半径（指针不超出 r-1）。",
+    "cx": 153.5,
+    "cy": 44,
+    "r": 6.5
+  },
+  "lamps": [
+    {
+      "$comment": "左吊灯灯泡中心",
+      "x": 62,
+      "y": 71,
+      "rx": 24,
+      "ry": 14
+    },
+    {
+      "$comment": "右吊灯灯泡中心",
+      "x": 263,
+      "y": 70,
+      "rx": 24,
+      "ry": 14
+    }
+  ],
+  "bubble": {
+    "$comment": "气泡是 DOM，不是 canvas 画的。锚点是角色 sprite 的左上角 + 这些偏移。主角锚左上方、副角锚右上方，避免同排气泡互相压。",
+    "main": {
+      "dx": -8,
+      "dy": -6,
+      "maxW": 220,
+      "maxH": 120
+    },
+    "sub": {
+      "dx": 20,
+      "dy": -6,
+      "maxW": 150,
+      "maxH": 96
+    },
+    "staggerY": 28
+  }
+}

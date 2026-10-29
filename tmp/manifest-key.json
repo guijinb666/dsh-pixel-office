@@ -1,0 +1,36 @@
+{
+  "items": [
+    {
+      "in": "assets/char/subs/sit-back/m1-cat-sit.png",
+      "out": "tmp/keyed/m1-cat.png"
+    },
+    {
+      "in": "assets/char/subs/sit-back/m2-sakura-sit.png",
+      "out": "tmp/keyed/m2-sakura.png"
+    },
+    {
+      "in": "assets/char/subs/sit-back/m3-gothic-sit.png",
+      "out": "tmp/keyed/m3-gothic.png"
+    },
+    {
+      "in": "assets/char/subs/sit-back/m4-sailor-sit.png",
+      "out": "tmp/keyed/m4-sailor.png"
+    },
+    {
+      "in": "assets/char/subs/sit-back/m5-sporty-sit.png",
+      "out": "tmp/keyed/m5-sporty.png"
+    },
+    {
+      "in": "assets/char/subs/sit-back/m6-witch-sit.png",
+      "out": "tmp/keyed/m6-witch.png"
+    },
+    {
+      "in": "assets/char/subs/sit-back/m7-cafe-sit.png",
+      "out": "tmp/keyed/m7-cafe.png"
+    },
+    {
+      "in": "assets/char/subs/sit-back/m8-idol-sit.png",
+      "out": "tmp/keyed/m8-idol.png"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+﻿import puppeteer from "puppeteer-core";
+const EDGE = "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe";
+const b = await puppeteer.launch({ executablePath: EDGE, headless: "new", args: ["--no-sandbox"] });
+const p = await b.newPage();
+await p.goto("http://127.0.0.1:8791/?act=probe", { waitUntil: "domcontentloaded" });
+await p.waitForSelector("[data-po-card]", { timeout: 20000 });
+await new Promise(r => setTimeout(r, 7000));
+const a = await p.evaluate(() => window.__pixelOfficeWalk());
+const snap = await p.evaluate(async () => (await fetch("/api/pixel-office/state")).json());
+console.log("screens:", JSON.stringify(a.screens));
+const s = snap.snapshot;
+console.log("main activity:", s.main && s.main.activity, "agent:", s.main && s.main.agentId);
+s.subs.forEach((x, i) => { if (x) console.log("sub:" + i, "activity=" + x.activity, "agent=" + x.agentId); });
+await b.close();
