@@ -61,9 +61,14 @@ tmp/shot/
 tmp/shots/
 tmp/shots-m05088/
 tmp/shots-parade/
+tmp/site-shots/
+tmp/record/
 tmp/sheet/
 tmp/crop/
 tmp/live/
 tmp/nq/
 tmp/sweep2/
 tmp/repix-test/
+
+# 设计技能的中间产物（方向单、审图截图）
+.taste-skill/

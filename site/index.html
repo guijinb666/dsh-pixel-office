@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>像素工作台 · 把 DSH 会话坐成一间办公室</title>
+<meta name="description" content="DSH 的像素办公室插件。每个会话派一只小人走进办公室坐下打字，子 agent 各有工位和皮肤。附实机录屏、资产账目和十五套验收脚本的数字。">
+<meta name="theme-color" content="#cbe4f2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@600;700&family=Noto+Sans+SC:wght@700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip" href="#main">跳到正文</a>
+
+<header class="nav">
+  <a class="mark" href="#top"><span class="pip" aria-hidden="true"></span>像素工作台</a>
+  <nav aria-label="页面目录">
+    <a href="#cast">皮肤</a>
+    <a href="#beats">四个瞬间</a>
+    <a href="#moving">会动的</a>
+    <a href="#faq">问题</a>
+  </nav>
+  <a class="btn" href="#install">装进 DSH</a>
+</header>
+
+<main id="main">
+
+<!-- 首屏：母题＝办公室底图正下方那扇圆拱门洞。
+     它在这里变成一个被视口右缘裁掉的大圆，圆里是实机录屏。 -->
+<section class="hero" id="top">
+  <div class="sun" aria-hidden="true"><span></span></div>
+  <div class="hero-copy">
+    <h1>会话开在<br>办公室里</h1>
+    <p class="lead">DSH 每开一个会话，就有一只像素小人从门口进来，坐到自己的工位上开始打字。主 agent 坐双屏大桌，子 agent 一人一格；它们敲键盘的时候，桌面上的屏幕同一刻亮起来。</p>
+    <p class="hero-cta"><a class="btn" href="#install">把办公室接进来</a></p>
+    <p class="hero-note">一段四秒实录。气泡里的字按实测字宽横向滚，主 agent 一窗十个字，子 agent 一窗五个；长句走完才停。</p>
+  </div>
+  <figure class="hero-shot">
+    <div class="arch">
+      <video id="reel" src="media/stage-loop.webm" poster="media/stage-live.png"
+        width="640" height="862" autoplay muted loop playsinline
+        aria-label="像素画俯视办公室里，主 agent 在双屏大桌前打字，三只子 agent 在下方工位各做各的，头顶气泡里的字在横向滚动"></video>
+    </div>
+  </figure>
+</section>
+
+<!-- 八套皮肤：圆形舞台 + 竖向名字列 -->
+<section class="cast" id="cast">
+  <div class="stage">
+    <div class="disc" aria-hidden="true"></div>
+    <div class="ring" aria-hidden="true"></div>
+    <img class="skin" id="skin" src="media/skin-1.png" width="144" height="192" alt="当前选中的子 agent 皮肤，正面坐姿的像素小人">
+  </div>
+  <div class="roster">
+    <h2>八个同事</h2>
+    <p class="roster-lead">八套皮肤各占一格工位。点名字换人，左脚那块圆盘跟着换色。</p>
+    <ul id="skins">
+      <li><button class="pick on" data-src="media/skin-1.png" data-alt="蓝发猫耳的坐姿像素小人" data-tone="sky" data-fact="猫耳。认不出的 model 落到这里最多：拿 agentId 做哈希取模，结果常是零。">猫耳</button></li>
+      <li><button class="pick" data-src="media/skin-2.png" data-alt="浅粉和服的坐姿像素小人" data-tone="sand" data-fact="樱色。和服下摆最宽，走到第三排也不会被前排椅背挡住。">樱色</button></li>
+      <li><button class="pick" data-src="media/skin-3.png" data-alt="黑色哥特裙的坐姿像素小人" data-tone="sun" data-fact="哥特。一身深色配深色桌面，屏幕光只落在肩线上。">哥特</button></li>
+      <li><button class="pick" data-src="media/skin-4.png" data-alt="水手服领结的坐姿像素小人" data-tone="sky" data-fact="水手。副工位格宽二十六像素，这套的肩膀正好卡满。">水手</button></li>
+      <li><button class="pick" data-src="media/skin-5.png" data-alt="运动装的坐姿像素小人" data-tone="sand" data-fact="运动。八套里唯一头顶没有饰品，一排坐开时最好认。">运动</button></li>
+      <li><button class="pick" data-src="media/skin-6.png" data-alt="尖顶帽的坐姿像素小人" data-tone="sun" data-fact="女巫。帽子最高，坐在最后一排也露得出来。">女巫</button></li>
+      <li><button class="pick" data-src="media/skin-7.png" data-alt="咖啡店员围裙的坐姿像素小人" data-tone="sky" data-fact="店员。围裙的深色把腰线断开，走动时腿的相位最好读。">店员</button></li>
+      <li><button class="pick" data-src="media/skin-8.png" data-alt="紫色偶像装的坐姿像素小人" data-tone="sand" data-fact="偶像。发色最亮，画在暗屋子里有一点反光的意思。">偶像</button></li>
+    </ul>
+    <p class="fact" id="fact" aria-live="polite">猫耳。认不出的 model 落到这里最多：拿 agentId 做哈希取模，结果常是零。</p>
+  </div>
+</section>
+
+<!-- 四个瞬间：四张实机图，高度交替，不是卡片 -->
+<section class="beats" id="beats">
+  <h2>一条消息的四个瞬间</h2>
+  <div class="strip">
+    <figure class="beat">
+      <img src="media/stage-live.png" width="972" height="1383" alt="俯视的像素办公室：主 agent 在双屏大桌前，三只子 agent 坐在下方工位，各自头顶浮出一条正在做的事">
+      <figcaption><b>坐进来</b>先从门洞探出一只，后面几只按座位顺序排队跟进，间隔由队列算，不重叠。</figcaption>
+    </figure>
+    <figure class="beat tall">
+      <img src="media/sleep.png" width="648" height="922" alt="暗下来的办公室，每只像素小人趴在自己的桌上睡着，头顶浮着 z">
+      <figcaption><b>睡着</b>一轮结束就坐定，闲置十秒趴到桌上睡，整个人缩一圈；下一句话到了自己醒。</figcaption>
+    </figure>
+    <figure class="beat">
+      <img src="media/stage-parade.png" width="972" height="1383" alt="四只像素小人排成一列沿办公室下方的过道向右走，队尾还在格子中间">
+      <figcaption><b>走掉</b>按住空格把鱼拖到画布外，它们就地坐地；全拖完了排队向右走出画面。</figcaption>
+    </figure>
+    <figure class="beat tall">
+      <img src="media/front.png" width="972" height="1383" alt="主 agent 头顶浮出一条白色气泡，气泡下沿有个小三角指着它的头顶">
+      <figcaption><b>说话</b>气泡的小三角精确指向头顶，字超宽就横向滚，不截断、不换行。</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 会动的六件事：每一行一个真开关，关掉那一行的演示就停 -->
+<section class="moving" id="moving">
+  <h2>会动的六件事</h2>
+  <p class="moving-lead">左边是它现在怎么动，右边那个开关对应设置面板里的同一项。关掉看看。</p>
+  <ul class="switchlist">
+    <li class="row">
+      <div class="demo d-bubble" aria-hidden="true"><span>正在把像素办公室接进会话</span></div>
+      <p>气泡按实测字宽滚动。主 agent 一窗十个字，子 agent 一窗五个字，长句横着走完才停。</p>
+      <button class="sw on" role="switch" aria-checked="true" aria-label="气泡滚动"><span></span></button>
+    </li>
+    <li class="row">
+      <div class="demo d-sleep" aria-hidden="true"><img src="media/pose/main-pose-asleep.png" alt=""><img src="media/pose/main-pose-asleep.png" alt=""></div>
+      <p>闲置十秒，人趴到桌上睡，整个人缩一圈；有事件进来立刻醒，睡姿帧和坐姿帧是两套。</p>
+      <button class="sw on" role="switch" aria-checked="true" aria-label="闲置睡姿"><span></span></button>
+    </li>
+    <li class="row">
+      <div class="demo d-lamp" aria-hidden="true"><i></i><em></em><b></b><u></u></div>
+      <p>吊灯每六十秒掉一次电，持续一百二十毫秒；有人在敲键盘时亮得久一点。</p>
+      <button class="sw on" role="switch" aria-checked="true" aria-label="灯光呼吸"><span></span></button>
+    </li>
+    <li class="row">
+      <div class="demo d-clock" aria-hidden="true">
+        <i><b></b><b></b><b></b><b></b><u></u></i><s></s>
+      </div>
+      <p>挂钟按秒跳格，不连续扫。屏幕开机是扫描线展开，关机是线性衰减到全暗。</p>
+      <button class="sw on" role="switch" aria-checked="true" aria-label="挂钟与屏幕"><span></span></button>
+    </li>
+    <li class="row">
+      <div class="demo d-drag" aria-hidden="true"><img src="media/pose/main-sit-1.png" alt=""><i></i><em>?</em></div>
+      <p>按住空格把鱼拖出办公室，松手它就坐在地上发呆；双击解除，它自己找路回工位。</p>
+      <button class="sw on" role="switch" aria-checked="true" aria-label="空格拖出"><span></span></button>
+    </li>
+    <li class="row">
+      <div class="demo d-panel" aria-hidden="true">
+        <span><i></i><b></b></span><span><i></i><b></b></span>
+        <span><i></i><b></b></span><span><i></i><b></b></span>
+      </div>
+      <p>设置面板四行：显示、尺寸、速度、动画，加一个恢复默认。切到隐藏，整间办公室收成一块木牌。</p>
+      <button class="sw on" role="switch" aria-checked="true" aria-label="设置面板"><span></span></button>
+    </li>
+  </ul>
+</section>
+
+<!-- 账目：不等宽拼贴，和上面的四张图不同构 -->
+<section class="ledger" id="ledger">
+  <h2>摊开的账</h2>
+  <div class="collage">
+    <div class="cell c-big">
+      <b>101</b>
+      <span>张 PNG 资产。全部自己生成、自己抠底、自己按基准高对齐，没有一张是现成素材。</span>
+    </div>
+    <div class="cell c-sky">
+      <b>12</b>
+      <span>个副工位，三排四列。桌沿坐标是扫图量出来的，写在 seats.json 里。</span>
+    </div>
+    <div class="cell c-sun">
+      <b>251</b>
+      <span>项断言，来自十五套验收脚本。入场排队、睡姿、拖拽、气泡滚动、面板拖动、彩蛋、双击解除，各有一套。</span>
+    </div>
+    <div class="cell c-ink">
+      <b>0</b>
+      <span>个第三方运行依赖。插件包里没有 node_modules，放进 DSH 口袋就能跑，不额外起服务，不占端口。</span>
+    </div>  </div>
+
+  <figure class="map-band">
+    <img src="media/office-map.png" width="1280" height="1724" alt="办公室底图的四倍分辨率版本：三排工位、两张吊灯、一扇门、一台复印机，全部按手绘的透视摆好">
+    <figcaption>
+      <b>整间屋子是画出来的。</b>
+      <span>320×431 的逻辑画布，上面这张是四倍分辨率母版。桌面、吊灯、门洞、复印机的位置全部以逻辑画布为单位写死，所以换个窗口大小，鱼和家具还是对得上。</span>
+      <span>座位锚点、门洞宽高、挂钟圆心、两块吊灯的椭圆半径，都躺在一个六点四 KB 的 seats.json 里。换底图之后跑一次扫图脚本，重新量一遍桌沿，改锚点即可。</span>
+    </figcaption>
+  </figure>
+</section>
+
+<!-- 彩蛋：文案先、图后（顺序会决定标签算不算 eyebrow） -->
+<section class="easter" id="easter">
+  <div class="easter-copy">
+    <h2>拖完最后一格<br>掉下一块牌子</h2>
+    <p>按住空格再拖，鱼就不在工位上坐好了，而是就地坐在地上发呆，头顶冒问号抖一秒。双击它就自己站起来，绕过门洞走回工位。</p>
+    <p>把四条全拖出画布，它们排成一列向右走掉，然后从画布中央掉下这块木牌。把鱼一只只拖回来，牌子自己收走。</p>
+    <p class="tiny">牌上的字先量字宽再排两行，不会溢出牌边；底图是四百八十二字节的像素木牌。</p>
+  </div>
+  <figure class="board-fig">
+    <img src="media/board.png" width="558" height="520" alt="一块像素木牌立在深色背景中央，牌面上有两行手绘字：您的全体员工已出逃，无法继续工作">
+  </figure>
+</section>
+
+<section class="faq" id="faq">
+  <h2>会问的</h2>
+  <div class="acc">
+    <details open>
+      <summary>它会读到我的代码吗</summary>
+      <div class="ans"><p>不会。插件只订阅 DSH 抛出的会话事件：消息文本、工具名、子 agent 的模型名和座位号。文件内容和命令输出都不进插件，它也不需要这些。</p></div>
+    </details>
+    <details>
+      <summary>要什么版本</summary>
+      <div class="ans"><p>DSH 0.1.7-rc.1 以上，web 平台。放进 DSH 口袋的 node_modules 就能跑，不额外起服务，不占端口。</p></div>
+    </details>
+    <details>
+      <summary>动画会不会拖慢界面</summary>
+      <div class="ans"><p>一个 requestAnimationFrame 循环，全在 320×431 的逻辑坐标里画，最后整块缩放一次贴到画布。窗口隐藏时停帧，缩放小于某一档时降帧。</p></div>
+    </details>
+    <details>
+      <summary>子 agent 的皮肤怎么定</summary>
+      <div class="ans"><p>先按 model 名映射；认不出的 model 拿 agentId 做字符串哈希取模。两只撞到同一套时，后到的顺延一格，保证同屏不撞衫。</p></div>
+    </details>
+    <details>
+      <summary>能自己换底图和人物吗</summary>
+      <div class="ans"><p>能。场景是一张 320×431 的逻辑坐标底图，座位锚点写在 seats.json 里。换底图之后跑一次扫图脚本重新量桌沿，改锚点即可。</p></div>
+    </details>
+    <details>
+      <summary>验收脚本怎么跑</summary>
+      <div class="ans"><p>起一个假 DSH 界面的验收台，再用无头浏览器连上去，用真实的指针事件驱动真实代码。十五套脚本覆盖入场、睡姿、拖拽、气泡滚动、面板拖动、彩蛋和双击解除。</p></div>
+    </details>
+  </div>
+</section>
+
+<section class="install" id="install">
+  <h2>放进 DSH 的口袋</h2>
+  <p class="install-lead">把插件包拷进 node_modules，重启 DSH。它会自己从门口走进来坐下。</p>
+  <a class="mega" href="https://github.com/guijinb666" id="mega">装上</a>
+  <p class="install-note">Apache-2.0。仓库里是插件包、资产生产工具链，和那十五套验收脚本。</p>
+
+  <div class="install-rows">
+    <div>
+      <b>1 · 放包</b>
+      <span><code>packages/dsh-pixel-office</code> 拷进 DSH 的 node_modules。</span>
+    </div>
+    <div>
+      <b>2 · 重启</b>
+      <span>DSH 会读一次客户端包，改完必须重启才生效。</span>
+    </div>
+    <div>
+      <b>3 · 开工</b>
+      <span>开一个会话，鱼自己从门口走进来坐下，开始打字。</span>
+    </div>
+  </div>
+
+  <figure class="settings-fig">
+    <img src="media/settings.png" width="648" height="1152" alt="设置面板展开的样子：四行分段按钮，分别是显示办公室开/关、尺寸小到大、速度快慢、播放动画开关，右下角是恢复默认">
+    <figcaption>设置面板。四行，一个恢复默认。位置和开合状态存在 localStorage。</figcaption>
+  </figure>
+</section>
+
+</main>
+
+<footer class="foot">
+  <span class="mark"><span class="pip" aria-hidden="true"></span>像素工作台</span>
+  <span>由 DSH 会话事件驱动的像素办公室。这一页上的每一张图、每一段录屏，都来自实机。</span>
+</footer>
+
+<script src="app.js" defer></script>
+</body>
+</html>
