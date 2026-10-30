@@ -39,7 +39,7 @@
    * 通过 `/api/pixel-office/diag` 读回来 —— 这是唯一能确认"改的代码有没有
    * 真的进到浏览器"的办法。改 client.js 时顺手加一个后缀。
    */
-  var REV = 'r2026-10-28.t6';
+  var REV = 'r2026-10-30.t7';
   /** 快照轮询间隔（ms）。 */
   var POLL_MS = 1000;
   /** 敲键盘帧切换间隔（ms）。 */
@@ -2473,12 +2473,159 @@
     }
   }
 
+  /**
+   * 解除空格彩蛋：就地坐地的鱼被双击后站起来、走回自己的工位。
+   *
+   * 路线与懵逼结束（resolveConfuse）同一套，因为两种情形在几何上完全一样：
+   *   · 落点在画布外 → 先原地落出画布底、沿画布外走到门口正下方、竖直穿门进来；
+   *   · 落点在画布内 → 交给 navRoute 绕开桌椅走回工位。
+   * 早期版本想「直接 set 回 seated」，鱼就瞬移回工位了 —— 这正是 m03550 第 2 条
+   * 抱怨过的表现，所以这里一律走折线。
+   *
+   * @returns {boolean} 是否真的解除了（本来就 esc=false 时返回 false）。
+   */
+  function releaseEsc(seatId) {
+    var a = S.act[seatId];
+    if (!a || !a.esc) return false;
+    var doc = S.seatsDoc;
+    var target = seatPosition(seatId);
+    var from = a.pos || { x: a.escX, y: a.escY };
+
+    // 先把彩蛋标记清干净：坐地帧、出逃槽位、抖动、符号都不该带进回家路。
+    a.esc = false;
+    a.escSlotX = 0;
+    a.escFeetY = 0;
+    a.sitT0 = 0;
+    a.glyph = null;
+    a.shakeUntil = 0;
+    a.dbl = 0;
+    a.busyUntil = 0;
+
+    if (!target || !doc) {
+      a.phase = 'seated';
+      a.pos = null;
+      setFacingNow(a, 'back');
+      return true;
+    }
+    var isMain = seatId === 'main';
+    var sw = isMain ? doc.spriteSize.main : doc.spriteSize.sub;
+    var sh = spriteHeightFor(seatId);
+    var sc = doc.scene;
+    // 判外与 resolveConfuse 一致：必须看包围盒，不能只看左上角。
+    var outside = !sc || (
+      from.x < 0 || from.y < 0 ||
+      from.x + sw > sc.w || from.y + sh > sc.h
+    );
+    var path = null;
+    if (outside) {
+      path = planPathFromDoorIn(seatId, target, from);
+      if (path) {
+        a.walkPath = path;
+        a.walkLen = pathLen(path);
+        a.walkT0 = performance.now();
+        a.phase = 'reenter';
+        a.reenterStage = 'in';
+        setFacingNow(a, 'back');
+        return true;
+      }
+    }
+    path = planPathFrom(from, target, sh, sw);
+    if (!path) {
+      a.phase = 'seated';
+      a.pos = null;
+      setFacingNow(a, 'back');
+      return true;
+    }
+    a.walkPath = path;
+    a.walkLen = pathLen(path);
+    a.walkT0 = performance.now();
+    a.phase = 'walkhome';
+    setFacingNow(a, 'back');
+    return true;
+  }
+
+  /**
+   * 视口坐标命中「就地坐地的彩蛋鱼」。
+   *
+   * hitTest 用的 toLogical() 在画布外返回 null，所以被拖到面板外的鱼根本点不到；
+   * 而空格彩蛋的鱼大多数时候恰好就在面板外。解除操作必须能覆盖这种情形，
+   * 于是单开一个只认 esc 态的命中函数：换算走 toLogicalLoose（允许越界），
+   * 包围盒与面板内同一套 actorBox，z 用脚底线。
+   *
+   * 命中范围比 hitTest 的 ±2 放宽到 ±4：坐地帧会叠加 walkFootFix/sitDrop 的
+   * 竖向补偿，实际看到的矩形和 a.pos 能差几个像素，严格贴合会点不中脚底。
+   */
+  function hitEscAt(clientX, clientY, ts) {
+    var p = toLogicalLoose(clientX, clientY);
+    if (!p) return null;
+    var ids = Object.keys(S.act);
+    var best = null;
+    for (var i = 0; i < ids.length; i += 1) {
+      var id = ids[i];
+      var a = S.act[id];
+      if (!a || !a.esc || a.hidden || !a.pos) continue;
+      // 排队还没进门的席位画面上没人，不该被点到
+      var w = S.walkIns[id];
+      if (w && !w.ready) continue;
+      var b = actorBox(id, ts);
+      if (!b) continue;
+      if (p.x >= b.x - 4 && p.x <= b.x + b.w + 4 &&
+          p.y >= b.y - 4 && p.y <= b.y + b.h + 4) {
+        var z = b.y + b.h;
+        if (!best || z > best.z) best = { seatId: id, z: z };
+      }
+    }
+    return best ? best.seatId : null;
+  }
+
+  /**
+   * 承载「双击解除彩蛋」的窗口级监听。
+   *
+   * 为什么必须挂在 window 上：面板外的鱼由天空浮层绘制，而浮层是
+   * pointer-events:none，canvas 自身的事件也只在指针落进它的矩形内才触发。
+   * 这里只在**指针不在 canvas 内**时接手（面板内的命中仍由 canvas 的
+   * pointerdown → endGrab → onTap 处理），且只做观察，不 preventDefault、
+   * 不 stopPropagation，不会干扰宿主 UI。
+   */
+  function bindEscRelease() {
+    S.onEscDown = function (e) {
+      if (e.button !== undefined && e.button !== 0) return;
+      if (S.parade) return;
+      var now = performance.now();
+      // 面板内交给 canvas 自己的链路，避免同一次按下被判定两次
+      if (toLogical(e.clientX, e.clientY)) return;
+      var seatId = hitEscAt(e.clientX, e.clientY, now);
+      if (!seatId) return;
+      var a = S.act[seatId];
+      if (!a) return;
+      var near = Math.abs(e.clientX - a.lastX) + Math.abs(e.clientY - a.lastY) < DBL_SLOP * 2;
+      if (now - a.lastUp < DBL_MS && near) {
+        a.lastUp = 0;
+        a.lastX = 0;
+        a.lastY = 0;
+        releaseEsc(seatId);
+        return;
+      }
+      a.lastUp = now;
+      a.lastX = e.clientX;
+      a.lastY = e.clientY;
+    };
+    window.addEventListener('pointerdown', S.onEscDown, true);
+  }
+
   // --- 双击三级互动 ---------------------------------------------------------
 
   function doDoubleClick(seatId) {
     var a = ensureAct(seatId);
     var now = performance.now();
     if (now < a.busyUntil) return;
+    // 空格彩蛋的鱼：双击 = 解除彩蛋、走回工位，不再演三级互动。
+    // 三级互动是「在工位上原地」演的，而 esc 的鱼坐在地上/面板外，
+    // 演起来会又飘又错位，用户要的也是「解除」这个语义。
+    if (a.esc) {
+      releaseEsc(seatId);
+      return;
+    }
     a.dbl = (a.dbl % 3) + 1;
     if (a.dbl === 1) levelOne(seatId, now);
     else if (a.dbl === 2) levelTwo(seatId, now);
@@ -3286,7 +3433,20 @@
       // 所以这里必须把 grabbed 状态收干净（清 pos、回到 seated），
       // 但**不能**调 setFacingNow('back')——那会把 levelOne/Two/Three 刚起的
       // 正面转身覆盖掉，双击就形同没发生（踩过一次）。
+      // 空格彩蛋的鱼要单独收口：
+      //   · 双击 → onTap 里已经调 releaseEsc，把 phase 设成 walkhome/reenter 并排好折线，
+      //     这里再写 phase='seated' 会把路线一笔勾销，鱼就瞬移回工位了；
+      //   · 单击 → 什么都不该发生。以前无条件 a.pos=null / phase='seated'，
+      //     坐地待机的鱼被点一下就闪回工位（esc 标记还在，于是坐在工位上摆坐地姿势）。
+      var wasEsc = !!a.esc;
       var fired = onTap(d.seatId, clientX, clientY, ts);
+      if (wasEsc) {
+        if (!a.esc) return;                       // 已经解除，路线归 releaseEsc 管
+        a.phase = 'seated';                       // 单击：原样坐回去
+        a.pos = { x: a.escX, y: a.escY };
+        setFacingNow(a, 'front');
+        return;
+      }
       a.pos = null;
       a.phase = 'seated';
       if (fired) return;
@@ -5402,6 +5562,9 @@
       window.addEventListener('resize', onWindowResize);
       bindCanvasInput();
       bindSpaceKey();
+      // 空格彩蛋的鱼常被拖到面板外，那里 canvas 收不到指针事件（天空浮层是
+      // pointer-events:none），双击解除只能靠窗口级监听兜住。
+      bindEscRelease();
       // 调试钩子：验收台据此确认命中/抓取状态（正式使用时不触发任何行为）
       window.__pixelOfficeDebug = function (lx, ly) {
         var ts = performance.now();
@@ -5522,6 +5685,10 @@
         // 这条链路全是 canvas 内的相位变化，没有 DOM 可断言，只能把内部量暴露出来。
         o.parade = S.parade || 0;
         o.paradeIds = (S.paradeIds || []).slice();
+        // 双击解除彩蛋（m08712）的窗口级监听是否已挂上：
+        // 面板外的鱼靠它接指针事件，没挂上时双击会静默无反应，
+        // 而"有没有挂上"在页面里没有任何其他可观测痕迹。
+        o.escDown = !!S.onEscDown;
         // 面板外浮层上一帧画了什么（m03550 第 12 条）：
         // skyShake>0 = 画布外的鱼正在懵逼抖动，skyGlyph>0 = 画布外冒出了头顶符号。
         o.skyShake = S.skyShake || 0;
@@ -5597,8 +5764,12 @@
     panelApi = null;
     if (S.onKeyDown) window.removeEventListener('keydown', S.onKeyDown);
     if (S.onKeyUp) window.removeEventListener('keyup', S.onKeyUp);
+    // 捕获阶段注册的指针监听必须用同一个 capture 值摘除，否则摘不掉，
+    // 插件热重载后会堆叠出多个 releaseEsc 判定。
+    if (S.onEscDown) window.removeEventListener('pointerdown', S.onEscDown, true);
     S.onKeyDown = null;
     S.onKeyUp = null;
+    S.onEscDown = null;
     window.removeEventListener('resize', onWindowResize);
     if (S.sky) {
       if (S.sky.cv && S.sky.cv.parentNode) S.sky.cv.parentNode.removeChild(S.sky.cv);
