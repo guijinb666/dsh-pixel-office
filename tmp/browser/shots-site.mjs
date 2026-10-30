@@ -6,9 +6,9 @@
  * 直接放到介绍页上完全不能用。这里改成 element.screenshot() + deviceScaleFactor=3，
  * 既没背景也没调试层，而且 3 倍分辨率放大后不糊。
  *
- * 产出（site/media/）：
+ * 产出（docs/media/）：
  *   stage-live.png    正常态：主鱼 + 三副鱼各就位，气泡在滚（气泡文字来自 harness 假 state）
- *   stage-queue.png   彩蛋阶段 1：全员就地坐地、排队成一列
+ *   stage-queue.png   彩蛋阶段 1：全员就地坐地、排队成一列（空房间时会是废图，弃用）
  *   stage-parade.png  彩蛋阶段 2：一起向右走出画布
  *
  * 用法：node tmp/browser/shots-site.mjs [baseUrl]
@@ -18,7 +18,7 @@ import fs from 'node:fs';
 
 const BASE = process.argv[2] || 'http://127.0.0.1:8791/';
 const EDGE = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
-const OUT = 'site/media';
+const OUT = 'docs/media';
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 fs.mkdirSync(OUT, { recursive: true });

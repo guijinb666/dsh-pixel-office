@@ -1,5 +1,5 @@
 /**
- * 录插件画布的真实动画，做成 site/media/stage-loop.webm。
+ * 录插件画布的真实动画，做成 docs/media/stage-loop.webm。
  *
  * 目的：介绍页需要一段真实动的东西（design-taste-frontend 的 no-footage 检查项），
  * 而且"会动"本身就是这个插件的卖点，用静态图说不清。

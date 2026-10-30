@@ -1,7 +1,7 @@
 // 把 board.png 裁到牌子本身 + 一点留白（原图 1400x900 大片黑底，页面上全是空虚）
 import { readPNG, writePNG } from '../tools/png.mjs';
 
-const SRC = 'site/media/board.png';
+const SRC = 'docs/media/board.png';
 const img = readPNG(SRC);
 const { w, h, data } = img;
 
@@ -34,5 +34,5 @@ for (let y = 0; y < ch; y += 1) {
   const src = ((y + y0) * w + (x0)) * 4;
   data.copy(out, y * cw * 4, src, src + cw * 4);
 }
-writePNG('site/media/board.png', cw, ch, out);
+writePNG('docs/media/board.png', cw, ch, out);
 console.log(`裁剪为 ${cw}x${ch}，比例 ${(cw / ch).toFixed(3)}`);

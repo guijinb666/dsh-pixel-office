@@ -14,7 +14,7 @@
 import { readPNG, writePNG } from '../tools/png.mjs';
 import fs from 'node:fs';
 
-const OUT = 'site/media';
+const OUT = 'docs/media';
 const NAMES = ['猫耳', '樱色', '哥特', '水手', '运动', '女巫', '店员', '偶像'];
 const SCALE = 8;
 

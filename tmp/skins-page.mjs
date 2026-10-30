@@ -6,7 +6,7 @@ import { readPNG, writePNG } from '../tools/png.mjs';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const SRC = path.join(ROOT, 'assets/char/subs/sit-front');
-const OUT = path.join(ROOT, 'site/media');
+const OUT = path.join(ROOT, 'docs/media');
 const NAMES = ['m1-cat', 'm2-sakura', 'm3-gothic', 'm4-sailor', 'm5-sporty', 'm6-witch', 'm7-cafe', 'm8-idol'];
 const TARGET_W = 460;
 const BORDER = 8;
